@@ -148,7 +148,8 @@ defmodule Explorer.Chain.Filecoin.NativeAddress do
     network = network_prefix()
 
     with true <- String.length(address_string) >= @min_address_string_length,
-         ^network <> protocol_indicator_and_payload <- address_string,
+         true <- String.starts_with?(address_string, network),
+         protocol_indicator_and_payload <- String.replace_prefix(address_string, network, ""),
          {:ok, address} <- cast_protocol_indicator_and_payload(protocol_indicator_and_payload),
          :ok <- verify_checksum(address) do
       {:ok, address}
